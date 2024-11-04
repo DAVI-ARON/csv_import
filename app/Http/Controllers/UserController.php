@@ -19,6 +19,16 @@ class UserController extends Controller
 
     // Importando arquivos
     public function import(Request $request) {
-        dd($request);
+
+        // Validando o formulario
+        $request->validate([
+            'file' => 'required|mimes:csv,txt|max:2048',
+        ],[
+            'file.required' => 'O campo de escolha de arquivo é obrigatório',
+            'file.mimes' => 'Tipo de arquivo inválido. Envie um arquivo .csv',
+            'file.max' => 'Tamanho do arquivo excede o max de :max MB'
+        ]
+    );
+        dd('Continuar');
     }
 }
