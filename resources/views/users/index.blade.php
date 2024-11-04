@@ -8,10 +8,16 @@
 </head>
 <body>
 
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <p class="text-red-600">{{ $error }}</p>
+        @endforeach
+    @endif
+
     <form action="{{ route('user.import') }}" method="post" enctype="multipart/form-data">
         @csrf
 
-        <input type="file" name="file" id="file" accept=".csv"><br><br>
+        <input type="file" name="file" id="file"><br><br>
         <button type="submit" id="import_file">Importar</button>
 
     </form>
