@@ -8,6 +8,14 @@
 </head>
 <body>
 
+    @session('success')
+        <p style="color: green">{!! $value !!}</p>
+    @endsession
+
+    @session('error')
+        <p style="color: red">{!! $value !!}</p>
+    @endsession
+
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             <p class="text-red-600">{{ $error }}</p>
@@ -17,7 +25,7 @@
     <form action="{{ route('user.import') }}" method="post" enctype="multipart/form-data">
         @csrf
 
-        <input type="file" name="file" id="file"><br><br>
+        <input type="file" name="file" id="file" accept=".csv"><br><br>
         <button type="submit" id="import_file">Importar</button>
 
     </form>
