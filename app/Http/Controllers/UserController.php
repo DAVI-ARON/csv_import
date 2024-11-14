@@ -29,6 +29,60 @@ class UserController extends Controller
             'file.max' => 'Tamanho do arquivo excede o max de :max MB'
         ]
     );
-        dd('Continuar');
+    // Criar um array com as colunas do banco de dados
+        $headers = ['name', 'email', 'password'];
+
+    // Receber o arquivo, ler os dados e converter a string em array
+        $dataFile = array_map('str_getcsv', file($request->file('file')));
+
+    // Definindo variável de iteração
+        $numberRegisteredRecords = 0;
+        $emailAlredyRegistered = false;
+
+    // Percorrer todas as linhas do arquivo
+        foreach ($dataFile as $KeyData => $row) {
+
+            // Converter linha em array
+                $value = explode(';', $row[0]);
+
+            // Percorrer as colunas do cabeçalho
+                foreach ($headers as $key => $header) {
+
+                    // Verifica se a colune é um email
+                        if ($header == "email") {
+
+                            // Verifica se o email já está cadastrado no banco de dados
+                                if(User::where('email', $value[$key])->first()) {
+
+                                    // Atribui o e-mail na lista de e-mails já cadastrados
+                                        $emailAlredyRegistered .= $value[$key] . ", ";
+
+                                }
+
+                            // Verifica se a senha do usuário está encriptografada
+                                // if(User::where('email', $value[$key])->first()) {
+
+                                //     // Atribui o e-mail na lista de e-mails já cadastrados
+                                //         $emailAlredyRegistered .= $value[$key] . ", ";
+
+                                // }
+
+                        }
+
+                    // Atribui o valor ao elemento do array
+                        $arrayValues[$KeyData][$header] = $value[$key];
+
+                }
+                $numberRegisteredRecords++;
+        }
+
+        if ($emailAlredyRegistered) {
+
+            return back()->with('error', 'Dados não importados. Existem e-mails já cadastrados.:<br>' . $emailAlredyRegistered);
+
+        }
+
+        User::insert($arrayValues);
+        return back()->with('success', 'Dados importados com sucesso. <br>Quantidade: ' . $numberRegisteredRecords);
     }
 }
