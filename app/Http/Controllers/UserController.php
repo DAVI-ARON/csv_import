@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -48,6 +49,9 @@ class UserController extends Controller
             // Percorrer as colunas do cabeçalho
                 foreach ($headers as $key => $header) {
 
+                    // Atribui o valor ao elemento do array
+                     $arrayValues[$KeyData][$header] = $value[$key];
+
                     // Verifica se a colune é um email
                         if ($header == "email") {
 
@@ -58,21 +62,15 @@ class UserController extends Controller
                                         $emailAlredyRegistered .= $value[$key] . ", ";
 
                                 }
-
-                            // Verifica se a senha do usuário está encriptografada
-                                // if(User::where('email', $value[$key])->first()) {
-
-                                //     // Atribui o e-mail na lista de e-mails já cadastrados
-                                //         $emailAlredyRegistered .= $value[$key] . ", ";
-
-                                // }
-
                         }
 
-                    // Atribui o valor ao elemento do array
-                        $arrayValues[$KeyData][$header] = $value[$key];
+                    }
 
-                }
+                    // Verifica se está na coluna senha para criptografia
+                        if ($header = "password") {
+                            $arrayValues[$KeyData][$header] = Hash::make($arrayValues[$KeyData]['password'], ['rounds' => 12]);
+                        }
+
                 $numberRegisteredRecords++;
         }
 
