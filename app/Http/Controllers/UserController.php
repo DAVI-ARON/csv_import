@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -56,10 +57,10 @@ class UserController extends Controller
                         if ($header == "email") {
 
                             // Verifica se o email já está cadastrado no banco de dados
-                                if(User::where('email', $value[$key])->first()) {
+                                if(User::where('email', $arrayValues[$KeyData]['email'])->first()) {
 
                                     // Atribui o e-mail na lista de e-mails já cadastrados
-                                        $emailAlredyRegistered .= $value[$key] . ", ";
+                                        $emailAlredyRegistered .= $arrayValues[$KeyData]['email'] . ", ";
 
                                 }
                         }
@@ -68,7 +69,12 @@ class UserController extends Controller
 
                     // Verifica se está na coluna senha para criptografia
                         if ($header = "password") {
-                            $arrayValues[$KeyData][$header] = Hash::make($arrayValues[$KeyData]['password'], ['rounds' => 12]);
+                            // Criptografa a senha vinda no arquivo excel
+                            // $arrayValues[$KeyData][$header] = Hash::make($arrayValues[$KeyData]['password'], ['rounds' => 12]);
+
+                            // Cria uma senha aleatória para o usuário caso ele não tenha
+                            $arrayValues[$KeyData][$header] = Hash::make(Str::random(7), ['rounds' => 12]);
+                            // $arrayValues[$KeyData][$header] = Str::random(7);
                         }
 
                 $numberRegisteredRecords++;
